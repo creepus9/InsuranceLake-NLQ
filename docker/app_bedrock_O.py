@@ -4,7 +4,6 @@
 # Usage: streamlit run app_bedrock.py --server.runOnSave true
 
 import ast
-import pprint
 import boto3
 import json
 import logging
@@ -23,19 +22,15 @@ from langchain.sql_database import SQLDatabase
 from langchain_community.llms import Bedrock
 
 
-
+# from langchain.llms.bedrock import Bedrock
 from langchain_community.chat_models import BedrockChat
 from langchain_experimental.sql import SQLDatabaseChain
 from langchain.utilities.sql_database import SQLDatabase
 from urllib.parse import quote_plus
-from sqlalchemy import create_engine
+from sqlalchemy.engine import create_engine
 
 
-from langchain.agents.agent_types import AgentType
-from langchain.agents import initialize_agent, Tool
-from langchain.agents import AgentExecutor
-from langchain.prompts import MessagesPlaceholder
-from langchain.memory import ConversationBufferMemory
+
 
 # ***** CONFIGURABLE PARAMETERS *****
 REGION_NAME = "us-east-1"
@@ -45,8 +40,6 @@ REGION_NAME = "us-east-1"
 # anthropic.claude-3-sonnet-20240229-v1:0
 # anthropic.claude-3-haiku-20240307-v1:0
 # anthropic.claude-instant-v1
-#llm = Bedrock(model_id="ai21.j2-ultra-v1", model_kwargs={"maxTokens": 1024,"temperature": 0.0})
-
 
 MODEL_NAME = "anthropic.claude-3-haiku-20240307-v1:0"
 TEMPERATURE =  0.3
@@ -102,88 +95,20 @@ def main():
     athena_uri= get_athena_uri(REGION_NAME)
     # print (athena_uri)
     engine_athena = create_engine(athena_uri, echo=False)
-    db = SQLDatabase(engine_athena)
+    db = SQLDatabase(engine_athena, include_tables=['policydata'],sample_rows_in_table_info=3)
     
-    #retrieve metadata from glue data catalog
-    def parse_catalog():
-        #Connect to Glue catalog
-        #get metadata of redshift serverless tables
-        columns_str=''
-        
-        #define glue cient
-        glue_client = boto3.client('glue',region_name='us-east-2')
-        
-        db="syntheticgeneraldata"
-        response = glue_client.get_tables(DatabaseName =db)
-        print (response)
-        for tables in response['TableList']:
-            #classification in the response for s3 and other databases is different. Set classification based on the response location
-            if tables['StorageDescriptor']['Location'].startswith('s3'):  classification='s3' 
-            else:  classification = tables['Parameters']['classification']
-            for columns in tables['StorageDescriptor']['Columns']:
-                    dbname,tblname,colname=tables['DatabaseName'],tables['Name'],columns['Name']
-                    columns_str=columns_str+f'\n{classification}|{dbname}|{tblname}|{colname}'                     
-        #API
-        ## Append the metadata of the API to the unified glue data catalog
-        columns_str=columns_str+'\n'+('api|meteo|weather|weather')
-        return columns_str
 
-    glue_catalog = parse_catalog()
     # Create the prompt
-    # QUERY = """
-    # Create a syntactically correct athena query to run based on the question, then look at the results of the query and return the answer like a human
-    # {question}
-    # """
-    QUERY = """\n\nHuman: Given an input question, first create a syntactically correct postgres query to run, then look at the results of the query and return the answer.
+    QUERY = """
+    Create a syntactically correct postgresql query to run based on the question, then look at the results of the query and return the answer like a human
+    Always return just the answer in a way a human can unserstand. without any sql statements or steps of reasoning.
 
-    Do not append nothing or 'Query:' to SQLQuery.
-    
-    Display SQLResult after the query is run in plain english that users can understand. 
-
-    Provide answer in simple english statement.
-    Here is info about the schema:\n\n
-    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
-    SELECT policynumber "Policy Number"
-    , CAST(startdate AS date) "Summary Date"
-    , CAST(effectivedate AS date) "Policy Effective Date"
-    , CAST(expirationdate AS date) "Policy Expiration Date"
-    , insuredcompanyname "Company"
-    , lobcode "Line of Business"
-    , lobcode "LOBCode"
-    , neworrenewal "New or Renewal"
-    , insuredindustry "Industry"
-    , insuredsector "Sector"
-    , distributionchannel "Distribution Channel"
-    , insuredcity "City"
-    , insuredstatecode "State"
-    , insurednumberofemployees "Number of Employees"
-    , insuredemployeetier "Employer Size Tier"
-    , insuredannualrevenue "Revenue"
-    , territory "Territory"
-    , accidentyeartotalincurredamount "Claim Amount"
-    , policyinforce "Policy In-force"
-    , expiringpolicy "Policy Expiring"
-    , expiringpremiumamount "Premium Expiring"
-    , writtenpremiumamount "Written Premium"
-    , writtenpolicy "Written Policy"
-    , earnedpremium "Earned Premium"
-    , agentname "Agent Name"
-    , producercode "Agent Code"
-    FROM
-      syntheticgeneraldata_consume.policydata
-
-
-    
-    \n\n{question}\n\nAssistant: Here is the SQL Query: """
-
-    # Only use the following tables:
-    # {table_info}
-    # If someone asks for the sales, they really mean the tickit.sales table.
-    # If someone asks for the sales date, they really mean the column tickit.sales.saletime.
-    # Just provide the SQL query. Do not provide any preamble or additional text.
-    #ORIG
+    {question}
+    """
+   
     # sql_db_chain = SQLDatabaseChain(llm=llm, database=db, verbose=True,return_intermediate_steps=True)
-    sql_db_chain = SQLDatabaseChain.from_llm(llm=llm, db=db,verbose=True,use_query_checker=False,return_intermediate_steps=True)
+    # sql_db_chain = SQLDatabaseChain.from_llm(llm=llm, db=db,verbose=True,return_intermediate_steps=True)
+    sql_db_chain = SQLDatabaseChain.from_llm(llm=llm, db=db,verbose=True,return_intermediate_steps=True)
 
     # return SQLDatabaseChain.from_llm(
     #     llm,
@@ -193,41 +118,7 @@ def main():
     #     verbose=True,
     #     return_intermediate_steps=True,
     # )
-    # END ORIG
-    # SQLDatabaseChain.from_llm(llm, db, verbose=True)
-    # db_chain = SQLDatabaseChain.from_llm(
-    #     llm,
-    #     db,
-    #     # use_query_checker=True,
-    #     verbose=True,
-    #     return_intermediate_steps=True,
-    # )
-    tools = [
-        Tool(
-            name="dbchain",
-            func=sql_db_chain,
-            description="Chat with Athena SQLDB",
-        )
-    ]
 
-    agent_kwargs = {
-        "extra_prompt_messages": [MessagesPlaceholder(variable_name="memory")],
-    }
-    memory = ConversationBufferMemory(memory_key="memory", return_messages=True)
-
-    agent = initialize_agent(
-        tools, 
-        llm, 
-        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-        verbose=True, 
-        agent_kwargs=agent_kwargs, 
-        return_intermediate_steps=True,
-        handle_parsing_errors=True,
-        # memory=memory,
-        top_k=10000
-    )
-   
-    
     # store the initial value of widgets in session state
     if "visibility" not in st.session_state:
         st.session_state.visibility = "visible"
@@ -264,25 +155,40 @@ def main():
                     st.markdown(
                         """
                         - Simple
-                            - How many artists are there in the collection?
-                            - How many pieces of artwork are there?
-                            - How many artists are there whose nationality is 'Italian'?
-                            - How many artworks are by the artist 'Claude Monet'?
-                            - How many artworks are classified as paintings?
-                            - How many artworks were created by 'Spanish' artists?
-                            - How many artist names start with the letter 'M'?
+                            - What is the average written premium for each line of business and employer size tier?
+                            - Who are the top 10 agents by total written premium?
+                            - What is the average claim amount for Commercial Auto policies, grouped by employer size tier and state?
+                            - What are the policies with the highest and lowest claim amounts for each line of business?
+                            - What are the top 5 industries with the highest total written premium for each line of business?
+                            - What are the top 5 agents with the highest written premium, and what are their distribution channels?
+                            - How many policies and what is the total earned premium for each combination of line of business and distribution channel?
+                            - What is the average claim amount and the average number of employees for each industry and sector?
+                            - How many policies and what is the total written premium for each combination of state and employer size tier, ordered by total written premium descending?
+                            - What is the average earned premium and the average claim amount for each combination of line of business and distribution channel, for policies that are in-force and have a claim amount greater than $50,000?
                         - Moderate
-                            - How many artists are deceased as a percentage of all artists?
-                            - Who is the most prolific artist? What is their nationality?
-                            - What nationality of artists created the most artworks?
-                            - What is the ratio of male to female artists? Return as a ratio.
+                            - What is the average written premium for each line of business and employer size tier?
+                            - Who are the top 10 agents by total written premium?
+                            - What is the average claim amount for Commercial Auto policies, grouped by employer size tier and state?
+                            - What are the policies with the highest and lowest claim amounts for each line of business?
+                            - What are the top 5 industries with the highest total written premium for each line of business?
+                            - What are the top 5 agents with the highest written premium, and what are their distribution channels?
+                            - How many policies and what is the total earned premium for each combination of line of business and distribution channel?
+                            - What is the average claim amount and the average number of employees for each industry and sector?
+                            - How many policies and what is the total written premium for each combination of state and employer size tier, ordered by total written premium descending?
+                            - What is the average earned premium and the average claim amount for each combination of line of business and distribution channel, for policies that are in-force and have a claim amount greater than $50,000?
                         - Complex
-                            - How many artworks were produced during the First World War, which are classified as paintings?
-                            - What are the five oldest pieces of artwork? Return the title and date for each.
-                            - What are the 10 most prolific artists? Return their name and count of artwork.
-                            - Return the artwork for Frida Kahlo in a numbered list, including the title and date.
-                            - What is the count of artworks by classification? Return the first ten in descending order. Don't include Not_Assigned.
-                            - What are the 12 artworks by different Western European artists born before 1900? Write Python code to output them with Matplotlib as a table. Include header row and font size of 12.
+                            - For which combinations of line of business, distribution channel, and employer size tier is the premium retention ratio (earned premium / written premium) below 0.8?
+                            - What are the top 10 policies with the highest claim amounts for each combination of line of business, industry, and employer size tier?
+                            - For which combinations of line of business, industry, and territory is the policy retention rate (policies in-force / total policies) below 0.7?
+                            - What are the top 5 agents with the highest total written premium for each combination of line of business, industry, and territory, along with their average claim amount?
+                            - What are the policies with the highest and lowest earned premium for each combination of line of business, employer size tier, and state, along with their claim ratio (claim amount / earned premium)?
+                            - calculate the combined ratio for all data per each industry and state combination. return the data as a markdown table matrix
+                            - calculate the combined ratio for all data per each customer and state combination for the less profitable customers. return the data as a markdown table matrix
+                            - What are the top 5 territories with the highest total written premium, and what are the average claim amount and the average number of employees for each territory, ordered by total written premium descending?
+                            - How many policies, what is the total earned premium, and what is the average claim amount for each combination of line of business, distribution channel, and employer size tier, for policies that are new, have a claim amount greater than $100,000, and have a revenue greater than $10,000,000, ordered by total earned premium descending?
+                            - How many policies, what is the total written premium, and what is the average claim amount for each combination of industry, sector, and distribution channel, for policies that are expiring, have a claim amount between $50,000 and $200,000, and have a number of employees between 100 and 500, ordered by total written premium ascending?
+                            - How many policies, what is the total earned premium, and what is the average claim amount for each combination of state, city, and line of business, for policies that have a policy effective date in the year 2020, have a written premium greater than $50,000, and have a claim amount less than $20,000, ordered by total earned premium descending?
+                            - How many policies, what is the total written premium, and what is the average claim amount for each combination of agent name, line of business, and distribution channel, for policies that are new, have a policy effective date in the year 2021, have a written premium greater than $100,000, and have a claim amount greater than $75,000, ordered by total written premium descending?
                         - Unrelated to the Dataset
                             - Give me a recipe for chocolate cake.
                             - Who won the 2022 FIFA World Cup final?
@@ -309,16 +215,11 @@ def main():
                                                     # ,table_info=glue_catalog
                             )
                             print (question)
+                            output = sql_db_chain(question)
                             # output = sql_db_chain(user_input)
-                            # output = agent_executor(user_input)
-                            output = agent(question)
-                            # print (output)
-                            # pprint (output)
                             st.session_state.generated.append(output)
                             logging.info(st.session_state["query"])
                             logging.info(st.session_state["generated"])
-                            # print("Query: ",st.session_state["query"])
-                            # print("Generated: ",st.session_state["generated"])
                         except Exception as exc:
                             st.session_state.generated.append(NO_ANSWER_MSG)
                             logging.error(exc)
@@ -335,8 +236,7 @@ def main():
                                         "assistant",
                                         avatar=f"{BASE_AVATAR_URL}/{ASSISTANT_ICON}",
                                 ):
-                                    st.write(st.session_state["generated"][i]["output"])
-                                    # st.write(st.session_state["generated"][i])
+                                    st.write(st.session_state["generated"][i]["result"])
                                 with st.chat_message(
                                         "user",
                                         avatar=f"{BASE_AVATAR_URL}/{USER_ICON}",
@@ -368,43 +268,58 @@ def main():
             ):
                 st.markdown("Question:")
                 st.code(
-                    st.session_state["generated"][position]["input"], language="text"
-                    # st.session_state["generated"][position], language="text"
+                    st.session_state["generated"][position]["query"], language="text"
                 )
 
-                st.markdown("intermediate_steps:")
-                intermediate_steps = st.session_state["generated"][position]["intermediate_steps"]
-                thoughts = ""
-                for action, observation in intermediate_steps:
-                    thoughts += action.log
-                    thoughts += f"\nObservation: {observation}\nThought: "
-                # Set the agent_scratchpad variable to that value
-                # thoughts
+                st.markdown("SQL Query:")
                 st.code(
-                    # st.session_state["generated"][position]["intermediate_steps"],
-                    thoughts,
+                    st.session_state["generated"][position]["intermediate_steps"][1],
+                    language="sql",
+                )
+                
+                st.markdown("ALL:")
+                st.code(
+                    st.session_state["generated"][position], language="text"
+                )
+                st.markdown("BLABLA2:")
+                st.code(
+                    st.session_state["generated"][position]["intermediate_steps"][0],
                     language="sql",
                 )
 
-                # st.markdown("Results:")
-                # st.code(
-                #     st.session_state["generated"][position]["intermediate_steps"][3],
-                #     language="python",
-                # )
+                st.markdown("Results:")
+                st.code(
+                    st.session_state["generated"][position]["intermediate_steps"][3],
+                    language="python",
+                )
 
                 st.markdown("Answer:")
                 st.code(
-                    st.session_state["generated"][position]["output"], language="text"
+                    st.session_state["generated"][position]["result"], language="text"
                 )
+                import pprint
+                from decimal import Decimal
+
+                # pprint.pprint (st.session_state["generated"][position]["intermediate_steps"][3])
+                # pprint.pprint (ast.dump(ast.parse(st.session_state["generated"][position]["intermediate_steps"][3], mode='eval'), indent=4))
+                # import io
+                # data=pd.read_table(st.session_state["generated"][position]["intermediate_steps"][3], encoding='utf8') 
+
+                # Convert the list of tuples into a dataframe 
                 
                 # data = ast.literal_eval(
-                #     st.session_state["generated"][position]["intermediate_steps"]
+                #     st.session_state["generated"][position]["intermediate_steps"][3]
                 # )
-                # if len(data) > 0 and len(data[0]) > 1:
-                #     df = None
-                #     st.markdown("Pandas DataFrame:")
-                #     df = pd.DataFrame(data)
-                #     df
+                data =st.session_state["generated"][position]["intermediate_steps"][3]
+                # print (data)   
+                data = eval(data)
+
+                # Create a DataFrame from the list of tuples
+                if len(data) > 0 and len(data[0]) > 1:
+                    df = None
+                    st.markdown("Pandas DataFrame:")
+                    df = pd.DataFrame(data)
+                    st.dataframe(df)
             st.markdown("Query Error:")
             st.code(
                 st.session_state["query_error"], language="text"
@@ -481,7 +396,7 @@ def get_athena_uri(region_name):
 
     connathena=f"athena.us-east-2.amazonaws.com"
     portathena='443' #Update, if port is different.
-    schemaathena='syntheticgeneraldata_consume' #from Amazon Athena _consume
+    schemaathena='syntheticgeneraldata_consume' #from Amazon Athena
     s3stagingathena=f's3://dev-insurancelake-566541803426-us-east-2-glue-temp/query-results/'#from Amazon Athena settings
     wkgrpathena='insurancelake'#Update, if the workgroup is different
 

@@ -1,0 +1,797 @@
+- answer: There are 19304 rows in the policy table.
+  input: How many rows are in the policy table?
+  sql_cmd: SELECT count(*) FROM syntheticgeneraldata_consume.policydata;
+  sql_result: '[(19304,)]'
+  table_info: |
+    CREATE TABLE policydata
+    (
+        startdate           	date                	                    
+        enddate             	date                	                    
+        policynumber        	int                 	                    
+        effectivedate       	date                	                    
+        expirationdate      	date                	                    
+        lobcode             	string              	                    
+        customerno          	string              	                    
+        insuredcompanyname  	string              	                    
+        ein                 	string              	                    
+        insuredcity         	string              	                    
+        insuredstatecode    	string              	                    
+        insuredcontactcellphone	string              	                    
+        insuredcontactemail 	string              	                    
+        insuredindustry     	string              	                    
+        insuredsector       	string              	                    
+        insurednumberofemployees	int                 	                    
+        insuredemployeetier 	int                 	                    
+        insuredannualrevenue	bigint              	                    
+        neworrenewal        	string              	                    
+        territory           	string              	                    
+        distributionchannel 	string              	                    
+        producercode        	int                 	                    
+        agentname           	string              	                    
+        accidentyeartotalincurredamount	decimal(10,2)       	                    
+        policyinforce       	int                 	                    
+        expiringpolicy      	int                 	                    
+        expiringpremiumamount	decimal(10,2)       	                    
+        writtenpremiumamount	decimal(10,2)       	                    
+        writtenpolicy       	int                 	                    
+        earnedpremium       	decimal(10,2)       	                    
+        claimlimit          	decimal(13,2)       	                    
+        execution_id        	string              	                    
+        year                	string              	                    
+        month               	string              	                    
+        day                 	string              	                    
+            
+        # Partition Information	 	 
+        # col_name            	data_type           	comment             
+            
+        year                	string              	                    
+        month               	string              	                    
+        day                 	string              	       
+    )
+
+    /*
+    3 rows from policydata table:
+    "startdate","enddate","policynumber","effectivedate","expirationdate","lobcode","customerno","insuredcompanyname","ein","insuredcity","insuredstatecode","insuredcontactcellphone","insuredcontactemail","insuredindustry","insuredsector","insurednumberofemployees","insuredemployeetier","insuredannualrevenue","neworrenewal","territory","distributionchannel","producercode","agentname","accidentyeartotalincurredamount","policyinforce","expiringpolicy","expiringpremiumamount","writtenpremiumamount","writtenpolicy","earnedpremium","claimlimit","execution_id","year","month","day"
+    "2022-09-01","2022-09-30","9072092","2021-09-24","2022-09-24","WC","****","Cultivate Magnetic Action-Items","6cfcb7ef7f2bfaa21ec6f488ff7e36d462dbd2cfadb480e9b76e3e6e5cbbba35","Denver","CO","ef4f73a9a7081f7d39ba86f5d5ff12a01fa82d215a6053808f07bb2e4211fc02","ae7dd771709ea254c689d83a30f995fffec84e0d2b190d314def149c8bc81009","Restaurants","Services","9","1","1614240","New","West","Direct Portal","48920","VBBI Online Insurance LLC.",,"1","1","202.50","0.00","0","202.50","2025.00","e7d46ede-884a-49de-87cc-aa99d6b00aa0","2024","01","24"
+    "2022-09-01","2022-09-30","9267867","2022-07-02","2023-07-02","AUTO","****","Deploy Collaborative Users","4e2c51b7ec1148b14f6774594a07d525dabcb109ee3a65ea4158fca13f518426","Columbus","GA","eadb479d782ff83ab683f4fd81de645d0d060e309b5ddedb67ca488a369c5dba","e1db61c52450876161eb20893e6f2a7b05495d13a81bd8bc3bfd1ccffaa41867","Retail Apparel","Retail","475","2","94639950","Renewal","Southeast","Agent Email Not-ACORD","33375","Lawley LLC",,"1","0","0.00","0.00","0","3958.33","39583.30","e7d46ede-884a-49de-87cc-aa99d6b00aa0","2024","01","24"
+    "2022-09-01","2022-09-30","9310325","2022-03-05","2023-03-05","AUTO","****","Scale Clicks-And-Mortar Web-Readiness","e27a9c24eaf61ff086da49324176f0c800cd72a3b52558dd23893accc622c132","Indianapolis","IN","693335aa32c3bf5280f8a1e43e085b1f2c39b9aaf658f6fc200f1f7ece1d6a01","5351e869640130e64c6678bbdd9dfd1534109ac14d9b61cd95bb2c7b8a985bb1","Office Supplies","Consumer Non Cyclical","16","1","5246064","Renewal","Central","Agent Portal","47201","Robertson Ryan & Associates",,"1","0","0.00","0.00","0","133.33","1333.30","e7d46ede-884a-49de-87cc-aa99d6b00aa0","2024","01","24"
+    */
+
+- answer: There are 19304 rows in the general_insurance_quicksight_view view.
+  input: How many rows are in the general_insurance_quicksight_view view?
+  sql_cmd: SELECT count(*) FROM syntheticgeneraldata_consume.general_insurance_quicksight_view;
+  sql_result: '[(121211,)]'
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume
+    (
+        Policy Number	integer
+        Summary Date	date
+        Policy Effective Date	date
+        Policy Expiration Date	date
+        Company	varchar
+        Line of Business	varchar
+        LOBCode	varchar
+        New or Renewal	varchar
+        Industry	varchar
+        Sector	varchar
+        Distribution Channel	varchar
+        City	varchar
+        State	varchar
+        Number of Employees	integer
+        Employer Size Tier	integer
+        Revenue	bigint
+        Territory	varchar
+        Claim Amount	decimal(10,2)
+        Policy In-force	integer
+        Policy Expiring	integer
+        Premium Expiring	decimal(10,2)
+        Written Premium	decimal(10,2)
+        Written Policy	integer
+        Earned Premium	decimal(10,2)
+        Agent Name	varchar
+        Agent Code	integer
+    )
+
+    /*
+    3 rows from general_insurance_quicksight_view view:
+    "Policy Number","Summary Date","Policy Effective Date","Policy Expiration Date","Company","Line of Business","LOBCode","New or Renewal","Industry","Sector","Distribution Channel","City","State","Number of Employees","Employer Size Tier","Revenue","Territory","Claim Amount","Policy In-force","Policy Expiring","Premium Expiring","Written Premium","Written Policy","Earned Premium","Agent Name","Agent Code"
+    "9072092","2022-09-01","2021-09-24","2022-09-24","Cultivate Magnetic Action-Items","WC","WC","New","Restaurants","Services","Direct Portal","Denver","CO","9","1","1614240","West",,"1","1","202.50","0.00","0","202.50","VBBI Online Insurance LLC.","48920"
+    "9267867","2022-09-01","2022-07-02","2023-07-02","Deploy Collaborative Users","AUTO","AUTO","Renewal","Retail Apparel","Retail","Agent Email Not-ACORD","Columbus","GA","475","2","94639950","Southeast",,"1","0","0.00","0.00","0","3958.33","Lawley LLC","33375"
+    "9310325","2022-09-01","2022-03-05","2023-03-05","Scale Clicks-And-Mortar Web-Readiness","AUTO","AUTO","Renewal","Office Supplies","Consumer Non Cyclical","Agent Portal","Indianapolis","IN","16","1","5246064","Central",,"1","0","0.00","0.00","0","133.33","Robertson Ryan & Associates","47201"
+
+    */
+# Simple Queries
+- answer: This query returns the number of distinct policy numbers in the view.
+  input: How many distinct policy numbers are there in the view?
+  sql_cmd: SELECT COUNT(DISTINCT "Policy Number") FROM syntheticgeneraldata_consume.general_insurance_quicksight_view;
+  sql_result: '[(1000,)]'
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
+    SELECT policynumber "Policy Number"
+    , CAST(startdate AS date) "Summary Date"
+    , CAST(effectivedate AS date) "Policy Effective Date"
+    , CAST(expirationdate AS date) "Policy Expiration Date"
+    , insuredcompanyname "Company"
+    , lobcode "Line of Business"
+    , lobcode "LOBCode"
+    , neworrenewal "New or Renewal"
+    , insuredindustry "Industry"
+    , insuredsector "Sector"
+    , distributionchannel "Distribution Channel"
+    , insuredcity "City"
+    , insuredstatecode "State"
+    , insurednumberofemployees "Number of Employees"
+    , insuredemployeetier "Employer Size Tier"
+    , insuredannualrevenue "Revenue"
+    , territory "Territory"
+    , accidentyeartotalincurredamount "Claim Amount"
+    , policyinforce "Policy In-force"
+    , expiringpolicy "Policy Expiring"
+    , expiringpremiumamount "Premium Expiring"
+    , writtenpremiumamount "Written Premium"
+    , writtenpolicy "Written Policy"
+    , earnedpremium "Earned Premium"
+    , agentname "Agent Name"
+    , producercode "Agent Code"
+    FROM
+      syntheticgeneraldata_consume.policydata
+
+    /*
+    3 rows from artists table:
+    Policy Number	Summary Date	Policy Effective Date	Policy Expiration Date	Company	Line of Business	LOBCode	New or Renewal	Industry	Sector	Distribution Channel	City	State	Number of Employees	Employer Size Tier	Revenue	Territory	Claim Amount	Policy In-force	Policy Expiring	Premium Expiring	Written Premium	Written Policy	Earned Premium	Agent Name	Agent Code
+    1	9435361	2022-04-01	2021-08-14	2022-08-14	Redefine Mission-Critical Supply-Chains	AUTO	AUTO	New	Professional Services	Services	Agent Email Not-ACORD	Charleston	WV	308	2	137073860	Southeast		1	0	0.00	0.00	0	20533.33	Premier Group Insurance Inc.	49514
+    2	1702604	2022-04-01	2021-07-31	2022-07-31	Embrace World-Class Action-Items	AUTO	AUTO	Renewal	Professional Services	Services	Agent Email Not-ACORD	Cheyenne	WY	869	3	386744105	West	417124.28	1	0	0.00	0.00	0	57933.33	Premier Group Insurance Inc.	49514
+    3	6073046	2022-04-01	2021-07-16	2022-07-16	Aggregate Wireless Initiatives	AUTO	AUTO	New	Real Estate Operations	Services	Agent Email Not-ACORD	Kansas City	KS	485	2	700453490	Central		1	0	0.00	0.00	0	32333.33	Premier Group Insurance Inc.	49514
+    */  
+
+- answer: This query returns the number of policies that are new business.
+  input: How many policies are new business?
+  sql_cmd: SELECT COUNT(*) FROM syntheticgeneraldata_consume.general_insurance_quicksight_view WHERE "New or Renewal" = 'New';
+  sql_result: '[(500,)]'
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
+    SELECT policynumber "Policy Number"
+    , CAST(startdate AS date) "Summary Date"
+    , CAST(effectivedate AS date) "Policy Effective Date"
+    , CAST(expirationdate AS date) "Policy Expiration Date"
+    , insuredcompanyname "Company"
+    , lobcode "Line of Business"
+    , lobcode "LOBCode"
+    , neworrenewal "New or Renewal"
+    , insuredindustry "Industry"
+    , insuredsector "Sector"
+    , distributionchannel "Distribution Channel"
+    , insuredcity "City"
+    , insuredstatecode "State"
+    , insurednumberofemployees "Number of Employees"
+    , insuredemployeetier "Employer Size Tier"
+    , insuredannualrevenue "Revenue"
+    , territory "Territory"
+    , accidentyeartotalincurredamount "Claim Amount"
+    , policyinforce "Policy In-force"
+    , expiringpolicy "Policy Expiring"
+    , expiringpremiumamount "Premium Expiring"
+    , writtenpremiumamount "Written Premium"
+    , writtenpolicy "Written Policy"
+    , earnedpremium "Earned Premium"
+    , agentname "Agent Name"
+    , producercode "Agent Code"
+    FROM
+      syntheticgeneraldata_consume.policydata
+
+    /*
+    3 rows from policydata table:
+    Policy Number	Summary Date	Policy Effective Date	Policy Expiration Date	Company	Line of Business	LOBCode	New or Renewal	Industry	Sector	Distribution Channel	City	State	Number of Employees	Employer Size Tier	Revenue	Territory	Claim Amount	Policy In-force	Policy Expiring	Premium Expiring	Written Premium	Written Policy	Earned Premium	Agent Name	Agent Code
+    1	9435361	2022-04-01	2021-08-14	2022-08-14	Redefine Mission-Critical Supply-Chains	AUTO	AUTO	New	Professional Services	Services	Agent Email Not-ACORD	Charleston	WV	308	2	137073860	Southeast		1	0	0.00	0.00	0	20533.33	Premier Group Insurance Inc.	49514
+    2	1702604	2022-04-01	2021-07-31	2022-07-31	Embrace World-Class Action-Items	AUTO	AUTO	Renewal	Professional Services	Services	Agent Email Not-ACORD	Cheyenne	WY	869	3	386744105	West	417124.28	1	0	0.00	0.00	0	57933.33	Premier Group Insurance Inc.	49514
+    3	6073046	2022-04-01	2021-07-16	2022-07-16	Aggregate Wireless Initiatives	AUTO	AUTO	New	Real Estate Operations	Services	Agent Email Not-ACORD	Kansas City	KS	485	2	700453490	Central		1	0	0.00	0.00	0	32333.33	Premier Group Insurance Inc.	49514
+    */
+
+- answer: This query returns the number of distinct companies in the view.
+  input: How many distinct companies are there in the view?
+  sql_cmd: SELECT COUNT(DISTINCT "Company") FROM syntheticgeneraldata_consume.general_insurance_quicksight_view;
+  sql_result: '[(1000,)]'
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
+    SELECT policynumber "Policy Number"
+    , CAST(startdate AS date) "Summary Date"
+    , CAST(effectivedate AS date) "Policy Effective Date"
+    , CAST(expirationdate AS date) "Policy Expiration Date"
+    , insuredcompanyname "Company"
+    , lobcode "Line of Business"
+    , lobcode "LOBCode"
+    , neworrenewal "New or Renewal"
+    , insuredindustry "Industry"
+    , insuredsector "Sector"
+    , distributionchannel "Distribution Channel"
+    , insuredcity "City"
+    , insuredstatecode "State"
+    , insurednumberofemployees "Number of Employees"
+    , insuredemployeetier "Employer Size Tier"
+    , insuredannualrevenue "Revenue"
+    , territory "Territory"
+    , accidentyeartotalincurredamount "Claim Amount"
+    , policyinforce "Policy In-force"
+    , expiringpolicy "Policy Expiring"
+    , expiringpremiumamount "Premium Expiring"
+    , writtenpremiumamount "Written Premium"
+    , writtenpolicy "Written Policy"
+    , earnedpremium "Earned Premium"
+    , agentname "Agent Name"
+    , producercode "Agent Code"
+    FROM
+      syntheticgeneraldata_consume.policydata
+
+    /*
+    3 rows from artists table:
+    Policy Number	Summary Date	Policy Effective Date	Policy Expiration Date	Company	Line of Business	LOBCode	New or Renewal	Industry	Sector	Distribution Channel	City	State	Number of Employees	Employer Size Tier	Revenue	Territory	Claim Amount	Policy In-force	Policy Expiring	Premium Expiring	Written Premium	Written Policy	Earned Premium	Agent Name	Agent Code
+    1	9435361	2022-04-01	2021-08-14	2022-08-14	Redefine Mission-Critical Supply-Chains	AUTO	AUTO	New	Professional Services	Services	Agent Email Not-ACORD	Charleston	WV	308	2	137073860	Southeast		1	0	0.00	0.00	0	20533.33	Premier Group Insurance Inc.	49514
+    2	1702604	2022-04-01	2021-07-31	2022-07-31	Embrace World-Class Action-Items	AUTO	AUTO	Renewal	Professional Services	Services	Agent Email Not-ACORD	Cheyenne	WY	869	3	386744105	West	417124.28	1	0	0.00	0.00	0	57933.33	Premier Group Insurance Inc.	49514
+    3	6073046	2022-04-01	2021-07-16	2022-07-16	Aggregate Wireless Initiatives	AUTO	AUTO	New	Real Estate Operations	Services	Agent Email Not-ACORD	Kansas City	KS	485	2	700453490	Central		1	0	0.00	0.00	0	32333.33	Premier Group Insurance Inc.	49514
+    */
+
+- answer: This query returns the number of policies with a written premium greater than $50,000.
+  input: How many policies have a written premium greater than $50,000?
+  sql_cmd: SELECT COUNT(*) FROM syntheticgeneraldata_consume.general_insurance_quicksight_view WHERE "Written Premium" > 50000;
+  sql_result: '[(250,)]'
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
+    SELECT policynumber "Policy Number"
+    , CAST(startdate AS date) "Summary Date"
+    , CAST(effectivedate AS date) "Policy Effective Date"
+    , CAST(expirationdate AS date) "Policy Expiration Date"
+    , insuredcompanyname "Company"
+    , lobcode "Line of Business"
+    , lobcode "LOBCode"
+    , neworrenewal "New or Renewal"
+    , insuredindustry "Industry"
+    , insuredsector "Sector"
+    , distributionchannel "Distribution Channel"
+    , insuredcity "City"
+    , insuredstatecode "State"
+    , insurednumberofemployees "Number of Employees"
+    , insuredemployeetier "Employer Size Tier"
+    , insuredannualrevenue "Revenue"
+    , territory "Territory"
+    , accidentyeartotalincurredamount "Claim Amount"
+    , policyinforce "Policy In-force"
+    , expiringpolicy "Policy Expiring"
+    , expiringpremiumamount "Premium Expiring"
+    , writtenpremiumamount "Written Premium"
+    , writtenpolicy "Written Policy"
+    , earnedpremium "Earned Premium"
+    , agentname "Agent Name"
+    , producercode "Agent Code"
+    FROM
+      syntheticgeneraldata_consume.policydata
+
+    /*
+    3 rows from artists table:
+    Policy Number	Summary Date	Policy Effective Date	Policy Expiration Date	Company	Line of Business	LOBCode	New or Renewal	Industry	Sector	Distribution Channel	City	State	Number of Employees	Employer Size Tier	Revenue	Territory	Claim Amount	Policy In-force	Policy Expiring	Premium Expiring	Written Premium	Written Policy	Earned Premium	Agent Name	Agent Code
+    1	9435361	2022-04-01	2021-08-14	2022-08-14	Redefine Mission-Critical Supply-Chains	AUTO	AUTO	New	Professional Services	Services	Agent Email Not-ACORD	Charleston	WV	308	2	137073860	Southeast		1	0	0.00	0.00	0	20533.33	Premier Group Insurance Inc.	49514
+    2	1702604	2022-04-01	2021-07-31	2022-07-31	Embrace World-Class Action-Items	AUTO	AUTO	Renewal	Professional Services	Services	Agent Email Not-ACORD	Cheyenne	WY	869	3	386744105	West	417124.28	1	0	0.00	0.00	0	57933.33	Premier Group Insurance Inc.	49514
+    3	6073046	2022-04-01	2021-07-16	2022-07-16	Aggregate Wireless Initiatives	AUTO	AUTO	New	Real Estate Operations	Services	Agent Email Not-ACORD	Kansas City	KS	485	2	700453490	Central		1	0	0.00	0.00	0	32333.33	Premier Group Insurance Inc.	49514
+    */
+
+- answer: This query returns the number of policies with a claim amount greater than $100,000.
+  input: How many policies have a claim amount greater than $100,000?
+  sql_cmd: SELECT COUNT(*) FROM syntheticgeneraldata_consume.general_insurance_quicksight_view WHERE "Claim Amount" > 100000;
+  sql_result: '[(150,)]'
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
+    SELECT policynumber "Policy Number"
+    , CAST(startdate AS date) "Summary Date"
+    , CAST(effectivedate AS date) "Policy Effective Date"
+    , CAST(expirationdate AS date) "Policy Expiration Date"
+    , insuredcompanyname "Company"
+    , lobcode "Line of Business"
+    , lobcode "LOBCode"
+    , neworrenewal "New or Renewal"
+    , insuredindustry "Industry"
+    , insuredsector "Sector"
+    , distributionchannel "Distribution Channel"
+    , insuredcity "City"
+    , insuredstatecode "State"
+    , insurednumberofemployees "Number of Employees"
+    , insuredemployeetier "Employer Size Tier"
+    , insuredannualrevenue "Revenue"
+    , territory "Territory"
+    , accidentyeartotalincurredamount "Claim Amount"
+    , policyinforce "Policy In-force"
+    , expiringpolicy "Policy Expiring"
+    , expiringpremiumamount "Premium Expiring"
+    , writtenpremiumamount "Written Premium"
+    , writtenpolicy "Written Policy"
+    , earnedpremium "Earned Premium"
+    , agentname "Agent Name"
+    , producercode "Agent Code"
+    FROM
+      syntheticgeneraldata_consume.policydata
+
+    /*
+    3 rows from artists table:
+    Policy Number	Summary Date	Policy Effective Date	Policy Expiration Date	Company	Line of Business	LOBCode	New or Renewal	Industry	Sector	Distribution Channel	City	State	Number of Employees	Employer Size Tier	Revenue	Territory	Claim Amount	Policy In-force	Policy Expiring	Premium Expiring	Written Premium	Written Policy	Earned Premium	Agent Name	Agent Code
+    1	9435361	2022-04-01	2021-08-14	2022-08-14	Redefine Mission-Critical Supply-Chains	AUTO	AUTO	New	Professional Services	Services	Agent Email Not-ACORD	Charleston	WV	308	2	137073860	Southeast		1	0	0.00	0.00	0	20533.33	Premier Group Insurance Inc.	49514
+    2	1702604	2022-04-01	2021-07-31	2022-07-31	Embrace World-Class Action-Items	AUTO	AUTO	Renewal	Professional Services	Services	Agent Email Not-ACORD	Cheyenne	WY	869	3	386744105	West	417124.28	1	0	0.00	0.00	0	57933.33	Premier Group Insurance Inc.	49514
+    3	6073046	2022-04-01	2021-07-16	2022-07-16	Aggregate Wireless Initiatives	AUTO	AUTO	New	Real Estate Operations	Services	Agent Email Not-ACORD	Kansas City	KS	485	2	700453490	Central		1	0	0.00	0.00	0	32333.33	Premier Group Insurance Inc.	49514
+    */
+
+# Complex Queries
+- answer: This query returns the top 10 companies by written premium amount.
+  input: What are the top 10 companies by written premium amount?
+  sql_cmd: |
+    SELECT "Company", SUM("Written Premium") AS "Total Written Premium"
+    FROM syntheticgeneraldata_consume.general_insurance_quicksight_view
+    GROUP BY "Company"
+    ORDER BY "Total Written Premium" DESC
+    LIMIT 10;
+  sql_result: |
+    [("Redefine Mission-Critical Supply-Chains", 2053333.3),
+     ("Embrace World-Class Action-Items", 1939666.7),
+     ("Aggregate Wireless Initiatives", 1939666.7),
+     ("Incentivize Frictionless Paradigms", 1939666.7),
+     ("Synergize Bleeding-Edge Infrastructures", 1939666.7),
+     ("Cultivate Ubiquitous Mindshare", 1939666.7),
+     ("Exploit Frictionless Paradigms", 1939666.7),
+     ("Leverage Ubiquitous Infomediaries", 1939666.7),
+     ("Reinvent Frictionless Mindshare", 1939666.7),
+     ("Syndicate Wireless Architectures", 1939666.7)]
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
+    SELECT policynumber "Policy Number"
+    , CAST(startdate AS date) "Summary Date"
+    , CAST(effectivedate AS date) "Policy Effective Date"
+    , CAST(expirationdate AS date) "Policy Expiration Date"
+    , insuredcompanyname "Company"
+    , lobcode "Line of Business"
+    , lobcode "LOBCode"
+    , neworrenewal "New or Renewal"
+    , insuredindustry "Industry"
+    , insuredsector "Sector"
+    , distributionchannel "Distribution Channel"
+    , insuredcity "City"
+    , insuredstatecode "State"
+    , insurednumberofemployees "Number of Employees"
+    , insuredemployeetier "Employer Size Tier"
+    , insuredannualrevenue "Revenue"
+    , territory "Territory"
+    , accidentyeartotalincurredamount "Claim Amount"
+    , policyinforce "Policy In-force"
+    , expiringpolicy "Policy Expiring"
+    , expiringpremiumamount "Premium Expiring"
+    , writtenpremiumamount "Written Premium"
+    , writtenpolicy "Written Policy"
+    , earnedpremium "Earned Premium"
+    , agentname "Agent Name"
+    , producercode "Agent Code"
+    FROM
+      syntheticgeneraldata_consume.policydata
+
+    /*
+    3 rows from artists table:
+    Policy Number	Summary Date	Policy Effective Date	Policy Expiration Date	Company	Line of Business	LOBCode	New or Renewal	Industry	Sector	Distribution Channel	City	State	Number of Employees	Employer Size Tier	Revenue	Territory	Claim Amount	Policy In-force	Policy Expiring	Premium Expiring	Written Premium	Written Policy	Earned Premium	Agent Name	Agent Code
+    1	9435361	2022-04-01	2021-08-14	2022-08-14	Redefine Mission-Critical Supply-Chains	AUTO	AUTO	New	Professional Services	Services	Agent Email Not-ACORD	Charleston	WV	308	2	137073860	Southeast		1	0	0.00	0.00	0	20533.33	Premier Group Insurance Inc.	49514
+    2	1702604	2022-04-01	2021-07-31	2022-07-31	Embrace World-Class Action-Items	AUTO	AUTO	Renewal	Professional Services	Services	Agent Email Not-ACORD	Cheyenne	WY	869	3	386744105	West	417124.28	1	0	0.00	0.00	0	57933.33	Premier Group Insurance Inc.	49514
+    3	6073046	2022-04-01	2021-07-16	2022-07-16	Aggregate Wireless Initiatives	AUTO	AUTO	New	Real Estate Operations	Services	Agent Email Not-ACORD	Kansas City	KS	485	2	700453490	Central		1	0	0.00	0.00	0	32333.33	Premier Group Insurance Inc.	49514
+    */
+
+- answer: This query returns the top 5 lines of business by earned premium amount.
+  input: What are the top 5 lines of business by earned premium amount?
+  sql_cmd: |
+    SELECT "Line of Business", SUM("Earned Premium") AS "Total Earned Premium"
+    FROM syntheticgeneraldata_consume.general_insurance_quicksight_view
+    GROUP BY "Line of Business"
+    ORDER BY "Total Earned Premium" DESC
+    LIMIT 5;
+  sql_result: |
+    [("AUTO", 10200000.0),
+     ("COMMERCIAL PROPERTY", 5100000.0),
+     ("GENERAL LIABILITY", 5100000.0),
+     ("WORKERS COMPENSATION", 5100000.0),
+     ("COMMERCIAL UMBRELLA", 2550000.0)]
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
+    SELECT policynumber "Policy Number"
+    , CAST(startdate AS date) "Summary Date"
+    , CAST(effectivedate AS date) "Policy Effective Date"
+    , CAST(expirationdate AS date) "Policy Expiration Date"
+    , insuredcompanyname "Company"
+    , lobcode "Line of Business"
+    , lobcode "LOBCode"
+    , neworrenewal "New or Renewal"
+    , insuredindustry "Industry"
+    , insuredsector "Sector"
+    , distributionchannel "Distribution Channel"
+    , insuredcity "City"
+    , insuredstatecode "State"
+    , insurednumberofemployees "Number of Employees"
+    , insuredemployeetier "Employer Size Tier"
+    , insuredannualrevenue "Revenue"
+    , territory "Territory"
+    , accidentyeartotalincurredamount "Claim Amount"
+    , policyinforce "Policy In-force"
+    , expiringpolicy "Policy Expiring"
+    , expiringpremiumamount "Premium Expiring"
+    , writtenpremiumamount "Written Premium"
+    , writtenpolicy "Written Policy"
+    , earnedpremium "Earned Premium"
+    , agentname "Agent Name"
+    , producercode "Agent Code"
+    FROM
+      syntheticgeneraldata_consume.policydata
+
+    /*
+    3 rows from artists table:
+    Policy Number	Summary Date	Policy Effective Date	Policy Expiration Date	Company	Line of Business	LOBCode	New or Renewal	Industry	Sector	Distribution Channel	City	State	Number of Employees	Employer Size Tier	Revenue	Territory	Claim Amount	Policy In-force	Policy Expiring	Premium Expiring	Written Premium	Written Policy	Earned Premium	Agent Name	Agent Code
+    1	9435361	2022-04-01	2021-08-14	2022-08-14	Redefine Mission-Critical Supply-Chains	AUTO	AUTO	New	Professional Services	Services	Agent Email Not-ACORD	Charleston	WV	308	2	137073860	Southeast		1	0	0.00	0.00	0	20533.33	Premier Group Insurance Inc.	49514
+    2	1702604	2022-04-01	2021-07-31	2022-07-31	Embrace World-Class Action-Items	AUTO	AUTO	Renewal	Professional Services	Services	Agent Email Not-ACORD	Cheyenne	WY	869	3	386744105	West	417124.28	1	0	0.00	0.00	0	57933.33	Premier Group Insurance Inc.	49514
+    3	6073046	2022-04-01	2021-07-16	2022-07-16	Aggregate Wireless Initiatives	AUTO	AUTO	New	Real Estate Operations	Services	Agent Email Not-ACORD	Kansas City	KS	485	2	700453490	Central		1	0	0.00	0.00	0	32333.33	Premier Group Insurance Inc.	49514
+    */
+
+- answer: This query returns the average claim amount by industry and sector.
+  input: What is the average claim amount by industry and sector?
+  sql_cmd: |
+    SELECT "Industry", "Sector", AVG("Claim Amount") AS "Average Claim Amount"
+    FROM syntheticgeneraldata_consume.general_insurance_quicksight_view
+    WHERE "Claim Amount" > 0
+    GROUP BY "Industry", "Sector"
+    ORDER BY "Average Claim Amount" DESC;
+  sql_result: |
+    [("Mining", "Natural Resources", 1041810.64),
+     ("Utilities", "Natural Resources", 1041810.64),
+     ("Agriculture", "Natural Resources", 1041810.64),
+     ("Construction", "Industrial", 834248.512),
+     ("Manufacturing", "Industrial", 834248.512),
+     ("Transportation", "Industrial", 834248.512),
+     ("Wholesale Trade", "Services", 626686.384),
+     ("Retail Trade", "Services", 626686.384),
+     ("Real Estate Operations", "Services", 626686.384),
+     ("Professional Services", "Services", 626686.384),
+     ("Education", "Services", 626686.384),
+     ("Health Care", "Services", 626686.384),
+     ("Arts and Entertainment", "Services", 626686.384),
+     ("Accommodation and Food Services", "Services", 626686.384),
+     ("Other Services", "Services", 626686.384),
+     ("Public Administration", "Public Administration", 419124.256),
+     ("Information", "Information", 209562.128)]
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
+    SELECT policynumber "Policy Number"
+    , CAST(startdate AS date) "Summary Date"
+    , CAST(effectivedate AS date) "Policy Effective Date"
+    , CAST(expirationdate AS date) "Policy Expiration Date"
+    , insuredcompanyname "Company"
+    , lobcode "Line of Business"
+    , lobcode "LOBCode"
+    , neworrenewal "New or Renewal"
+    , insuredindustry "Industry"
+    , insuredsector "Sector"
+    , distributionchannel "Distribution Channel"
+    , insuredcity "City"
+    , insuredstatecode "State"
+    , insurednumberofemployees "Number of Employees"
+    , insuredemployeetier "Employer Size Tier"
+    , insuredannualrevenue "Revenue"
+    , territory "Territory"
+    , accidentyeartotalincurredamount "Claim Amount"
+    , policyinforce "Policy In-force"
+    , expiringpolicy "Policy Expiring"
+    , expiringpremiumamount "Premium Expiring"
+    , writtenpremiumamount "Written Premium"
+    , writtenpolicy "Written Policy"
+    , earnedpremium "Earned Premium"
+    , agentname "Agent Name"
+    , producercode "Agent Code"
+    FROM
+      syntheticgeneraldata_consume.policydata
+
+    /*
+    3 rows from artists table:
+    Policy Number	Summary Date	Policy Effective Date	Policy Expiration Date	Company	Line of Business	LOBCode	New or Renewal	Industry	Sector	Distribution Channel	City	State	Number of Employees	Employer Size Tier	Revenue	Territory	Claim Amount	Policy In-force	Policy Expiring	Premium Expiring	Written Premium	Written Policy	Earned Premium	Agent Name	Agent Code
+    1	9435361	2022-04-01	2021-08-14	2022-08-14	Redefine Mission-Critical Supply-Chains	AUTO	AUTO	New	Professional Services	Services	Agent Email Not-ACORD	Charleston	WV	308	2	137073860	Southeast		1	0	0.00	0.00	0	20533.33	Premier Group Insurance Inc.	49514
+    2	1702604	2022-04-01	2021-07-31	2022-07-31	Embrace World-Class Action-Items	AUTO	AUTO	Renewal	Professional Services	Services	Agent Email Not-ACORD	Cheyenne	WY	869	3	386744105	West	417124.28	1	0	0.00	0.00	0	57933.33	Premier Group Insurance Inc.	49514
+    3	6073046	2022-04-01	2021-07-16	2022-07-16	Aggregate Wireless Initiatives	AUTO	AUTO	New	Real Estate Operations	Services	Agent Email Not-ACORD	Kansas City	KS	485	2	700453490	Central		1	0	0.00	0.00	0	32333.33	Premier Group Insurance Inc.	49514
+    */
+
+- answer: This query returns the number of policies by distribution channel and new/renewal status.
+  input: How many policies are there by distribution channel and new/renewal status?
+  sql_cmd: |
+    SELECT "Distribution Channel", "New or Renewal", COUNT(*) AS "Policy Count"
+    FROM syntheticgeneraldata_consume.general_insurance_quicksight_view
+    GROUP BY "Distribution Channel", "New or Renewal"
+    ORDER BY "Distribution Channel", "New or Renewal";
+  sql_result: |
+    [("Agent Email ACORD", "New", 250),
+     ("Agent Email ACORD", "Renewal", 250),
+     ("Agent Email Not-ACORD", "New", 250),
+     ("Agent Email Not-ACORD", "Renewal", 250)]
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
+    SELECT policynumber "Policy Number"
+    , CAST(startdate AS date) "Summary Date"
+    , CAST(effectivedate AS date) "Policy Effective Date"
+    , CAST(expirationdate AS date) "Policy Expiration Date"
+    , insuredcompanyname "Company"
+    , lobcode "Line of Business"
+    , lobcode "LOBCode"
+    , neworrenewal "New or Renewal"
+    , insuredindustry "Industry"
+    , insuredsector "Sector"
+    , distributionchannel "Distribution Channel"
+    , insuredcity "City"
+    , insuredstatecode "State"
+    , insurednumberofemployees "Number of Employees"
+    , insuredemployeetier "Employer Size Tier"
+    , insuredannualrevenue "Revenue"
+    , territory "Territory"
+    , accidentyeartotalincurredamount "Claim Amount"
+    , policyinforce "Policy In-force"
+    , expiringpolicy "Policy Expiring"
+    , expiringpremiumamount "Premium Expiring"
+    , writtenpremiumamount "Written Premium"
+    , writtenpolicy "Written Policy"
+    , earnedpremium "Earned Premium"
+    , agentname "Agent Name"
+    , producercode "Agent Code"
+    FROM
+      syntheticgeneraldata_consume.policydata
+
+    /*
+    3 rows from artists table:
+    Policy Number	Summary Date	Policy Effective Date	Policy Expiration Date	Company	Line of Business	LOBCode	New or Renewal	Industry	Sector	Distribution Channel	City	State	Number of Employees	Employer Size Tier	Revenue	Territory	Claim Amount	Policy In-force	Policy Expiring	Premium Expiring	Written Premium	Written Policy	Earned Premium	Agent Name	Agent Code
+    1	9435361	2022-04-01	2021-08-14	2022-08-14	Redefine Mission-Critical Supply-Chains	AUTO	AUTO	New	Professional Services	Services	Agent Email Not-ACORD	Charleston	WV	308	2	137073860	Southeast		1	0	0.00	0.00	0	20533.33	Premier Group Insurance Inc.	49514
+    2	1702604	2022-04-01	2021-07-31	2022-07-31	Embrace World-Class Action-Items	AUTO	AUTO	Renewal	Professional Services	Services	Agent Email Not-ACORD	Cheyenne	WY	869	3	386744105	West	417124.28	1	0	0.00	0.00	0	57933.33	Premier Group Insurance Inc.	49514
+    3	6073046	2022-04-01	2021-07-16	2022-07-16	Aggregate Wireless Initiatives	AUTO	AUTO	New	Real Estate Operations	Services	Agent Email Not-ACORD	Kansas City	KS	485	2	700453490	Central		1	0	0.00	0.00	0	32333.33	Premier Group Insurance Inc.	49514
+    */
+
+- answer: This query returns the top 10 agents by written premium amount.
+  input: What are the top 10 agents by written premium amount?
+  sql_cmd: |
+    SELECT "Agent Name", SUM("Written Premium") AS "Total Written Premium"
+    FROM syntheticgeneraldata_consume.general_insurance_quicksight_view
+    GROUP BY "Agent Name"
+    ORDER BY "Total Written Premium" DESC
+    LIMIT 10;
+  sql_result: |
+    [("Premier Group Insurance Inc.", 20600000.0),
+     ("Acme Insurance Agency", 20600000.0),
+     ("ABC Insurance Agency", 20600000.0),
+     ("XYZ Insurance Agency", 20600000.0),
+     ("123 Insurance Agency", 20600000.0),
+     ("Apex Insurance Agency", 20600000.0),
+     ("Summit Insurance Agency", 20600000.0),
+     ("Pinnacle Insurance Agency", 20600000.0),
+     ("Zenith Insurance Agency", 20600000.0),
+     ("Horizon Insurance Agency", 20600000.0)]
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
+    SELECT policynumber "Policy Number"
+    , CAST(startdate AS date) "Summary Date"
+    , CAST(effectivedate AS date) "Policy Effective Date"
+    , CAST(expirationdate AS date) "Policy Expiration Date"
+    , insuredcompanyname "Company"
+    , lobcode "Line of Business"
+    , lobcode "LOBCode"
+    , neworrenewal "New or Renewal"
+    , insuredindustry "Industry"
+    , insuredsector "Sector"
+    , distributionchannel "Distribution Channel"
+    , insuredcity "City"
+    , insuredstatecode "State"
+    , insurednumberofemployees "Number of Employees"
+    , insuredemployeetier "Employer Size Tier"
+    , insuredannualrevenue "Revenue"
+    , territory "Territory"
+    , accidentyeartotalincurredamount "Claim Amount"
+    , policyinforce "Policy In-force"
+    , expiringpolicy "Policy Expiring"
+    , expiringpremiumamount "Premium Expiring"
+    , writtenpremiumamount "Written Premium"
+    , writtenpolicy "Written Policy"
+    , earnedpremium "Earned Premium"
+    , agentname "Agent Name"
+    , producercode "Agent Code"
+    FROM
+      syntheticgeneraldata_consume.policydata
+
+    /*
+    3 rows from artists table:
+    Policy Number	Summary Date	Policy Effective Date	Policy Expiration Date	Company	Line of Business	LOBCode	New or Renewal	Industry	Sector	Distribution Channel	City	State	Number of Employees	Employer Size Tier	Revenue	Territory	Claim Amount	Policy In-force	Policy Expiring	Premium Expiring	Written Premium	Written Policy	Earned Premium	Agent Name	Agent Code
+    1	9435361	2022-04-01	2021-08-14	2022-08-14	Redefine Mission-Critical Supply-Chains	AUTO	AUTO	New	Professional Services	Services	Agent Email Not-ACORD	Charleston	WV	308	2	137073860	Southeast		1	0	0.00	0.00	0	20533.33	Premier Group Insurance Inc.	49514
+    2	1702604	2022-04-01	2021-07-31	2022-07-31	Embrace World-Class Action-Items	AUTO	AUTO	Renewal	Professional Services	Services	Agent Email Not-ACORD	Cheyenne	WY	869	3	386744105	West	417124.28	1	0	0.00	0.00	0	57933.33	Premier Group Insurance Inc.	49514
+    3	6073046	2022-04-01	2021-07-16	2022-07-16	Aggregate Wireless Initiatives	AUTO	AUTO	New	Real Estate Operations	Services	Agent Email Not-ACORD	Kansas City	KS	485	2	700453490	Central		1	0	0.00	0.00	0	32333.33	Premier Group Insurance Inc.	49514
+    */
+
+# Very Complex Queries
+- answer: This query returns the top 5 companies by written premium amount for each combination of industry and sector, ordered by written premium amount descending.
+  input: What are the top 5 companies by written premium amount for each combination of industry and sector, ordered by written premium amount descending?
+  sql_cmd: |
+    WITH cte AS (
+      SELECT "Company", "Industry", "Sector", SUM("Written Premium") AS "Total Written Premium"
+      FROM syntheticgeneraldata_consume.general_insurance_quicksight_view
+      GROUP BY "Company", "Industry", "Sector"
+    )
+    SELECT "Industry", "Sector", "Company", "Total Written Premium"
+    FROM (
+      SELECT *, ROW_NUMBER() OVER (PARTITION BY "Industry", "Sector" ORDER BY "Total Written Premium" DESC) AS rn
+      FROM cte
+    ) t
+    WHERE rn <= 5
+    ORDER BY "Industry", "Sector", "Total Written Premium" DESC;
+  sql_result: |
+    [("Agriculture", "Natural Resources", "Syndicate Wireless Architectures", 193966.7),
+     ("Agriculture", "Natural Resources", "Exploit Frictionless Paradigms", 193966.7),
+     ("Agriculture", "Natural Resources", "Aggregate Wireless Initiatives", 193966.7),
+     ("Agriculture", "Natural Resources", "Incentivize Frictionless Paradigms", 193966.7),
+     ("Agriculture", "Natural Resources", "Embrace World-Class Action-Items", 193966.7),
+     ("Mining", "Natural Resources", "Syndicate Wireless Architectures", 193966.7),
+     ("Mining", "Natural Resources", "Exploit Frictionless Paradigms", 193966.7),
+     ("Mining", "Natural Resources", "Aggregate Wireless Initiatives", 193966.7),
+     ("Mining", "Natural Resources", "Incentivize Frictionless Paradigms", 193966.7),
+     ("Mining", "Natural Resources", "Embrace World-Class Action-Items", 193966.7),
+     ("Utilities", "Natural Resources", "Syndicate Wireless Architectures", 193966.7),
+     ("Utilities", "Natural Resources", "Exploit Frictionless Paradigms", 193966.7),
+     ("Utilities", "Natural Resources", "Aggregate Wireless Initiatives", 193966.7),
+     ("Utilities", "Natural Resources", "Incentivize Frictionless Paradigms", 193966.7),
+     ("Utilities", "Natural Resources", "Embrace World-Class Action-Items", 193966.7),
+     ("Construction", "Industrial", "Syndicate Wireless Architectures", 193966.7),
+     ("Construction", "Industrial", "Exploit Frictionless Paradigms", 193966.7),
+     ("Construction", "Industrial", "Aggregate Wireless Initiatives", 193966.7),
+     ("Construction", "Industrial", "Incentivize Frictionless Paradigms", 193966.7),
+     ("Construction", "Industrial", "Embrace World-Class Action-Items", 193966.7),
+     ("Manufacturing", "Industrial", "Syndicate Wireless Architectures", 193966.7),
+     ("Manufacturing", "Industrial", "Exploit Frictionless Paradigms", 193966.7),
+     ("Manufacturing", "Industrial", "Aggregate Wireless Initiatives", 193966.7),
+     ("Manufacturing", "Industrial", "Incentivize Frictionless Paradigms", 193966.7),
+     ("Manufacturing", "Industrial", "Embrace World-Class Action-Items", 193966.7),
+     ("Transportation", "Industrial", "Syndicate Wireless Architectures", 193966.7),
+     ("Transportation", "Industrial", "Exploit Frictionless Paradigms", 193966.7),
+     ("Transportation", "Industrial", "Aggregate Wireless Initiatives", 193966.7),
+     ("Transportation", "Industrial", "Incentivize Frictionless Paradigms", 193966.7),
+     ("Transportation", "Industrial", "Embrace World-Class Action-Items", 193966.7)]
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
+    SELECT policynumber "Policy Number"
+    , CAST(startdate AS date) "Summary Date"
+    , CAST(effectivedate AS date) "Policy Effective Date"
+    , CAST(expirationdate AS date) "Policy Expiration Date"
+    , insuredcompanyname "Company"
+    , lobcode "Line of Business"
+    , lobcode "LOBCode"
+    , neworrenewal "New or Renewal"
+    , insuredindustry "Industry"
+    , insuredsector "Sector"
+    , distributionchannel "Distribution Channel"
+    , insuredcity "City"
+    , insuredstatecode "State"
+    , insurednumberofemployees "Number of Employees"
+    , insuredemployeetier "Employer Size Tier"
+    , insuredannualrevenue "Revenue"
+    , territory "Territory"
+    , accidentyeartotalincurredamount "Claim Amount"
+    , policyinforce "Policy In-force"
+    , expiringpolicy "Policy Expiring"
+    , expiringpremiumamount "Premium Expiring"
+    , writtenpremiumamount "Written Premium"
+    , writtenpolicy "Written Policy"
+    , earnedpremium "Earned Premium"
+    , agentname "Agent Name"
+    , producercode "Agent Code"
+    FROM
+      syntheticgeneraldata_consume.policydata
+
+    /*
+    3 rows from artists table:
+    Policy Number	Summary Date	Policy Effective Date	Policy Expiration Date	Company	Line of Business	LOBCode	New or Renewal	Industry	Sector	Distribution Channel	City	State	Number of Employees	Employer Size Tier	Revenue	Territory	Claim Amount	Policy In-force	Policy Expiring	Premium Expiring	Written Premium	Written Policy	Earned Premium	Agent Name	Agent Code
+    1	9435361	2022-04-01	2021-08-14	2022-08-14	Redefine Mission-Critical Supply-Chains	AUTO	AUTO	New	Professional Services	Services	Agent Email Not-ACORD	Charleston	WV	308	2	137073860	Southeast		1	0	0.00	0.00	0	20533.33	Premier Group Insurance Inc.	49514
+    2	1702604	2022-04-01	2021-07-31	2022-07-31	Embrace World-Class Action-Items	AUTO	AUTO	Renewal	Professional Services	Services	Agent Email Not-ACORD	Cheyenne	WY	869	3	386744105	West	417124.28	1	0	0.00	0.00	0	57933.33	Premier Group Insurance Inc.	49514
+    3	6073046	2022-04-01	2021-07-16	2022-07-16	Aggregate Wireless Initiatives	AUTO	AUTO	New	Real Estate Operations	Services	Agent Email Not-ACORD	Kansas City	KS	485	2	700453490	Central		1	0	0.00	0.00	0	32333.33	Premier Group Insurance Inc.	49514
+    */
+
+- answer: This query returns the top 3 lines of business by earned premium amount for each combination of industry and sector, ordered by earned premium amount descending.
+  input: What are the top 3 lines of business by earned premium amount for each combination of industry and sector, ordered by earned premium amount descending?
+  sql_cmd: |
+    WITH cte AS (
+      SELECT "Line of Business", "Industry", "Sector", SUM("Earned Premium") AS "Total Earned Premium"
+      FROM syntheticgeneraldata_consume.general_insurance_quicksight_view
+      GROUP BY "Line of Business", "Industry", "Sector"
+    )
+    SELECT "Industry", "Sector", "Line of Business", "Total Earned Premium"
+    FROM (
+      SELECT *, ROW_NUMBER() OVER (PARTITION BY "Industry", "Sector" ORDER BY "Total Earned Premium" DESC) AS rn
+      FROM cte
+    ) t
+    WHERE rn <= 3
+    ORDER BY "Industry", "Sector", "Total Earned Premium" DESC;
+  sql_result: |
+    [("Agriculture", "Natural Resources", "AUTO", 1020000.0),
+     ("Agriculture", "Natural Resources", "COMMERCIAL PROPERTY", 510000.0),
+     ("Agriculture", "Natural Resources", "GENERAL LIABILITY", 510000.0),
+     ("Mining", "Natural Resources", "AUTO", 1020000.0),
+     ("Mining", "Natural Resources", "COMMERCIAL PROPERTY", 510000.0),
+     ("Mining", "Natural Resources", "GENERAL LIABILITY", 510000.0),
+     ("Utilities", "Natural Resources", "AUTO", 1020000.0),
+     ("Utilities", "Natural Resources", "COMMERCIAL PROPERTY", 510000.0),
+     ("Utilities", "Natural Resources", "GENERAL LIABILITY", 510000.0),
+     ("Construction", "Industrial", "AUTO", 1020000.0),
+     ("Construction", "Industrial", "COMMERCIAL PROPERTY", 510000.0),
+     ("Construction", "Industrial", "GENERAL LIABILITY", 510000.0),
+     ("Manufacturing", "Industrial", "AUTO", 1020000.0),
+     ("Manufacturing", "Industrial", "COMMERCIAL PROPERTY", 510000.0),
+     ("Manufacturing", "Industrial", "GENERAL LIABILITY", 510000.0),
+     ("Transportation", "Industrial", "AUTO", 1020000.0),
+     ("Transportation", "Industrial", "COMMERCIAL PROPERTY", 510000.0),
+     ("Transportation", "Industrial", "GENERAL LIABILITY", 510000.0),
+     ("Wholesale Trade", "Services", "AUTO", 626666.67),
+     ("Wholesale Trade", "Services", "COMMERCIAL PROPERTY", 313333.33),
+     ("Wholesale Trade", "Services", "GENERAL LIABILITY", 313333.33),
+     ("Retail Trade", "Services", "AUTO", 626666.67),
+     ("Retail Trade", "Services", "COMMERCIAL PROPERTY", 313333.33),
+     ("Retail Trade", "Services", "GENERAL LIABILITY", 313333.33),
+     ("Real Estate Operations", "Services", "AUTO", 626666.67),
+     ("Real Estate Operations", "Services", "COMMERCIAL PROPERTY", 313333.33),
+     ("Real Estate Operations", "Services", "GENERAL LIABILITY", 313333.33),
+     ("Professional Services", "Services", "AUTO", 626666.67),
+     ("Professional Services", "Services", "COMMERCIAL PROPERTY", 313333.33),
+     ("Professional Services", "Services", "GENERAL LIABILITY", 313333.33),
+     ("Education", "Services", "AUTO", 626666.67),
+     ("Education", "Services", "COMMERCIAL PROPERTY", 313333.33),
+     ("Education", "Services", "GENERAL LIABILITY", 313333.33),
+     ("Health Care", "Services", "AUTO", 626666.67),
+     ("Health Care", "Services", "COMMERCIAL PROPERTY", 313333.33),
+     ("Health Care", "Services", "GENERAL LIABILITY", 313333.33),
+     ("Arts and Entertainment", "Services", "AUTO", 626666.67),
+     ("Arts and Entertainment", "Services", "COMMERCIAL PROPERTY", 313333.33),
+     ("Arts and Entertainment", "Services", "GENERAL LIABILITY", 313333.33),
+     ("Accommodation and Food Services", "Services", "AUTO", 626666.67),
+     ("Accommodation and Food Services", "Services", "COMMERCIAL PROPERTY", 313333.33),
+     ("Accommodation and Food Services", "Services", "GENERAL LIABILITY", 313333.33),
+     ("Other Services", "Services", "AUTO", 626666.67),
+     ("Other Services", "Services", "COMMERCIAL PROPERTY", 313333.33),
+     ("Other Services", "Services", "GENERAL LIABILITY", 313333.33),
+     ("Public Administration", "Public Administration", "AUTO", 419124.26),
+     ("Public Administration", "Public Administration", "COMMERCIAL PROPERTY", 209562.13),
+     ("Public Administration", "Public Administration", "GENERAL LIABILITY", 209562.13),
+     ("Information", "Information", "AUTO", 209562.13),
+     ("Information", "Information", "COMMERCIAL PROPERTY", 104781.06),
+     ("Information", "Information", "GENERAL LIABILITY", 104781.06)]
+  table_info: |
+    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
+    SELECT policynumber "Policy Number"
+    , CAST(startdate AS date) "Summary Date"
+    , CAST(effectivedate AS date) "Policy Effective Date"
+    , CAST(expirationdate AS date) "Policy Expiration Date"
+    , insuredcompanyname "Company"
+    , lobcode "Line of Business"
+    , lobcode "LOBCode"
+    , neworrenewal "New or Renewal"
+    , insuredindustry "Industry"
+    , insuredsector "Sector"
+    , distributionchannel "Distribution Channel"
+    , insuredcity "City"
+    , insuredstatecode "State"
+    , insurednumberofemployees "Number of Employees"
+    , insuredemployeetier "Employer Size Tier"
+    , insuredannualrevenue "Revenue"
+    , territory "Territory"
+    , accidentyeartotalincurredamount "Claim Amount"
+    , policyinforce "Policy In-force"
+    , expiringpolicy "Policy Expiring"
+    , expiringpremiumamount "Premium Expiring"
+    , writtenpremiumamount "Written Premium"
+    , writtenpolicy "Written Policy"
+    , earnedpremium "Earned Premium"
+    , agentname "Agent Name"
+    , producercode "Agent Code"
+    FROM
+      syntheticgeneraldata_consume.policydata
+
+    /*
+    3 rows from artists table:
+    Policy Number	Summary Date	Policy Effective Date	Policy Expiration Date	Company	Line of Business	LOBCode	New or Renewal	Industry	Sector	Distribution Channel	City	State	Number of Employees	Employer Size Tier	Revenue	Territory	Claim Amount	Policy In-force	Policy Expiring	Premium Expiring	Written Premium	Written Policy	Earned Premium	Agent Name	Agent Code
+    1	9435361	2022-04-01	2021-08-14	2022-08-14	Redefine Mission-Critical Supply-Chains	AUTO	AUTO	New	Professional Services	Services	Agent Email Not-ACORD	Charleston	WV	308	2	137073860	Southeast		1	0	0.00	0.00	0	20533.33	Premier Group Insurance Inc.	49514
+    2	1702604	2022-04-01	2021-07-31	2022-07-31	Embrace World-Class Action-Items	AUTO	AUTO	Renewal	Professional Services	Services	Agent Email Not-ACORD	Cheyenne	WY	869	3	386744105	West	417124.28	1	0	0.00	0.00	0	57933.33	Premier Group Insurance Inc.	49514
+    3	6073046	2022-04-01	2021-07-16	2022-07-16	Aggregate Wireless Initiatives	AUTO	AUTO	New	Real Estate Operations	Services	Agent Email Not-ACORD	Kansas City	KS	485	2	700453490	Central		1	0	0.00	0.00	0	32333.33	Premier Group Insurance Inc.	49514
+    */
+
+

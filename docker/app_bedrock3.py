@@ -87,6 +87,7 @@ def main():
         "temperature": TEMPERATURE,
         "max_tokens": 4000
     }
+    model_kwargs=parameters,
     llm = BedrockChat(region_name='us-east-1',
                   model_id=MODEL_NAME,
                   model_kwargs=parameters,
@@ -134,48 +135,115 @@ def main():
     # Create a syntactically correct athena query to run based on the question, then look at the results of the query and return the answer like a human
     # {question}
     # """
-    QUERY = """\n\nHuman: Given an input question, first create a syntactically correct postgres query to run, then look at the results of the query and return the answer.
+    
+    QUERY = """\n\nHuman: Given an input question, first create a syntactically correct athena query to run, then look at the results of the query and return the answer.
 
-    Do not append nothing or 'Query:' to SQLQuery.
+    Do not append 'Query:' to SQLQuery.
     
     Display SQLResult after the query is run in plain english that users can understand. 
 
     Provide answer in simple english statement.
-    Here is info about the schema:\n\n
-    CREATE VIEW syntheticgeneraldata_consume.general_insurance_quicksight_view AS
-    SELECT policynumber "Policy Number"
-    , CAST(startdate AS date) "Summary Date"
-    , CAST(effectivedate AS date) "Policy Effective Date"
-    , CAST(expirationdate AS date) "Policy Expiration Date"
-    , insuredcompanyname "Company"
-    , lobcode "Line of Business"
-    , lobcode "LOBCode"
-    , neworrenewal "New or Renewal"
-    , insuredindustry "Industry"
-    , insuredsector "Sector"
-    , distributionchannel "Distribution Channel"
-    , insuredcity "City"
-    , insuredstatecode "State"
-    , insurednumberofemployees "Number of Employees"
-    , insuredemployeetier "Employer Size Tier"
-    , insuredannualrevenue "Revenue"
-    , territory "Territory"
-    , accidentyeartotalincurredamount "Claim Amount"
-    , policyinforce "Policy In-force"
-    , expiringpolicy "Policy Expiring"
-    , expiringpremiumamount "Premium Expiring"
-    , writtenpremiumamount "Written Premium"
-    , writtenpolicy "Written Policy"
-    , earnedpremium "Earned Premium"
-    , agentname "Agent Name"
-    , producercode "Agent Code"
-    FROM
-      syntheticgeneraldata_consume.policydata
-
-
     
-    \n\n{question}\n\nAssistant: Here is the SQL Query: """
+      Here is info about the schema (between the <schema> tags):
+    <schema>
+    CREATE TABLE policydata
+    (
+        startdate           	date                	                    
+        enddate             	date                	                    
+        policynumber        	int                 	                    
+        effectivedate       	date                	                    
+        expirationdate      	date                	                    
+        lobcode             	string              	                    
+        customerno          	string              	                    
+        insuredcompanyname  	string              	                    
+        ein                 	string              	                    
+        insuredcity         	string              	                    
+        insuredstatecode    	string              	                    
+        insuredcontactcellphone	string              	                    
+        insuredcontactemail 	string              	                    
+        insuredindustry     	string              	                    
+        insuredsector       	string              	                    
+        insurednumberofemployees	int                 	                    
+        insuredemployeetier 	int                 	                    
+        insuredannualrevenue	bigint              	                    
+        neworrenewal        	string              	                    
+        territory           	string              	                    
+        distributionchannel 	string              	                    
+        producercode        	int                 	                    
+        agentname           	string              	                    
+        accidentyeartotalincurredamount	decimal(10,2)       	                    
+        policyinforce       	int                 	                    
+        expiringpolicy      	int                 	                    
+        expiringpremiumamount	decimal(10,2)       	                    
+        writtenpremiumamount	decimal(10,2)       	                    
+        writtenpolicy       	int                 	                    
+        earnedpremium       	decimal(10,2)       	                    
+        claimlimit          	decimal(13,2)       	                    
+        execution_id        	string              	                    
+        year                	string              	                    
+        month               	string              	                    
+        day                 	string              	                    
+            
+        # Partition Information	 	 
+        # col_name            	data_type           	comment             
+            
+        year                	string              	                    
+        month               	string              	                    
+        day                 	string              	       
+    )
 
+    /*
+    3 rows from policydata table:
+    "startdate","enddate","policynumber","effectivedate","expirationdate","lobcode","customerno","insuredcompanyname","ein","insuredcity","insuredstatecode","insuredcontactcellphone","insuredcontactemail","insuredindustry","insuredsector","insurednumberofemployees","insuredemployeetier","insuredannualrevenue","neworrenewal","territory","distributionchannel","producercode","agentname","accidentyeartotalincurredamount","policyinforce","expiringpolicy","expiringpremiumamount","writtenpremiumamount","writtenpolicy","earnedpremium","claimlimit","execution_id","year","month","day"
+    "2022-09-01","2022-09-30","9072092","2021-09-24","2022-09-24","WC","****","Cultivate Magnetic Action-Items","6cfcb7ef7f2bfaa21ec6f488ff7e36d462dbd2cfadb480e9b76e3e6e5cbbba35","Denver","CO","ef4f73a9a7081f7d39ba86f5d5ff12a01fa82d215a6053808f07bb2e4211fc02","ae7dd771709ea254c689d83a30f995fffec84e0d2b190d314def149c8bc81009","Restaurants","Services","9","1","1614240","New","West","Direct Portal","48920","VBBI Online Insurance LLC.",,"1","1","202.50","0.00","0","202.50","2025.00","e7d46ede-884a-49de-87cc-aa99d6b00aa0","2024","01","24"
+    "2022-09-01","2022-09-30","9267867","2022-07-02","2023-07-02","AUTO","****","Deploy Collaborative Users","4e2c51b7ec1148b14f6774594a07d525dabcb109ee3a65ea4158fca13f518426","Columbus","GA","eadb479d782ff83ab683f4fd81de645d0d060e309b5ddedb67ca488a369c5dba","e1db61c52450876161eb20893e6f2a7b05495d13a81bd8bc3bfd1ccffaa41867","Retail Apparel","Retail","475","2","94639950","Renewal","Southeast","Agent Email Not-ACORD","33375","Lawley LLC",,"1","0","0.00","0.00","0","3958.33","39583.30","e7d46ede-884a-49de-87cc-aa99d6b00aa0","2024","01","24"
+    "2022-09-01","2022-09-30","9310325","2022-03-05","2023-03-05","AUTO","****","Scale Clicks-And-Mortar Web-Readiness","e27a9c24eaf61ff086da49324176f0c800cd72a3b52558dd23893accc622c132","Indianapolis","IN","693335aa32c3bf5280f8a1e43e085b1f2c39b9aaf658f6fc200f1f7ece1d6a01","5351e869640130e64c6678bbdd9dfd1534109ac14d9b61cd95bb2c7b8a985bb1","Office Supplies","Consumer Non Cyclical","16","1","5246064","Renewal","Central","Agent Portal","47201","Robertson Ryan & Associates",,"1","0","0.00","0.00","0","133.33","1333.30","e7d46ede-884a-49de-87cc-aa99d6b00aa0","2024","01","24"
+    */
+
+    CREATE VIEW syntheticgeneraldata_consume
+    (
+        Policy Number	integer
+        Summary Date	date
+        Policy Effective Date	date
+        Policy Expiration Date	date
+        Company	varchar
+        Line of Business	varchar
+        LOBCode	varchar
+        New or Renewal	varchar
+        Industry	varchar
+        Sector	varchar
+        Distribution Channel	varchar
+        City	varchar
+        State	varchar
+        Number of Employees	integer
+        Employer Size Tier	integer
+        Revenue	bigint
+        Territory	varchar
+        Claim Amount	decimal(10,2)
+        Policy In-force	integer
+        Policy Expiring	integer
+        Premium Expiring	decimal(10,2)
+        Written Premium	decimal(10,2)
+        Written Policy	integer
+        Earned Premium	decimal(10,2)
+        Agent Name	varchar
+        Agent Code	integer
+    )
+
+    /*
+    3 rows from general_insurance_quicksight_view view:
+    "Policy Number","Summary Date","Policy Effective Date","Policy Expiration Date","Company","Line of Business","LOBCode","New or Renewal","Industry","Sector","Distribution Channel","City","State","Number of Employees","Employer Size Tier","Revenue","Territory","Claim Amount","Policy In-force","Policy Expiring","Premium Expiring","Written Premium","Written Policy","Earned Premium","Agent Name","Agent Code"
+    "9072092","2022-09-01","2021-09-24","2022-09-24","Cultivate Magnetic Action-Items","WC","WC","New","Restaurants","Services","Direct Portal","Denver","CO","9","1","1614240","West",,"1","1","202.50","0.00","0","202.50","VBBI Online Insurance LLC.","48920"
+    "9267867","2022-09-01","2022-07-02","2023-07-02","Deploy Collaborative Users","AUTO","AUTO","Renewal","Retail Apparel","Retail","Agent Email Not-ACORD","Columbus","GA","475","2","94639950","Southeast",,"1","0","0.00","0.00","0","3958.33","Lawley LLC","33375"
+    "9310325","2022-09-01","2022-03-05","2023-03-05","Scale Clicks-And-Mortar Web-Readiness","AUTO","AUTO","Renewal","Office Supplies","Consumer Non Cyclical","Agent Portal","Indianapolis","IN","16","1","5246064","Central",,"1","0","0.00","0.00","0","133.33","Robertson Ryan & Associates","47201"
+
+    */
+<schema>
+
+    Question: {question}\n\nAssistant:\n\n Here is the SQL Query: """
+    QUERY = """Human: Create a syntactically correct postgresql query to run based on the question, then look at the results of the query and return the answer like a human
+Question: {question}\n\nAssistant:\n\n
+"""
     # Only use the following tables:
     # {table_info}
     # If someone asks for the sales, they really mean the tickit.sales table.
@@ -183,25 +251,9 @@ def main():
     # Just provide the SQL query. Do not provide any preamble or additional text.
     #ORIG
     # sql_db_chain = SQLDatabaseChain(llm=llm, database=db, verbose=True,return_intermediate_steps=True)
-    sql_db_chain = SQLDatabaseChain.from_llm(llm=llm, db=db,verbose=True,use_query_checker=False,return_intermediate_steps=True)
+    sql_db_chain = SQLDatabaseChain.from_llm(llm=llm, db=db,verbose=True,return_intermediate_steps=True)
 
-    # return SQLDatabaseChain.from_llm(
-    #     llm,
-    #     db,
-    #     prompt=few_shot_prompt,
-    #     use_query_checker=False,  # must be False for OpenAI model
-    #     verbose=True,
-    #     return_intermediate_steps=True,
-    # )
-    # END ORIG
-    # SQLDatabaseChain.from_llm(llm, db, verbose=True)
-    # db_chain = SQLDatabaseChain.from_llm(
-    #     llm,
-    #     db,
-    #     # use_query_checker=True,
-    #     verbose=True,
-    #     return_intermediate_steps=True,
-    # )
+    
     tools = [
         Tool(
             name="dbchain",
@@ -218,9 +270,10 @@ def main():
     agent = initialize_agent(
         tools, 
         llm, 
-        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        # agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        # agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION,
         verbose=True, 
-        agent_kwargs=agent_kwargs, 
+        # agent_kwargs=agent_kwargs, 
         return_intermediate_steps=True,
         handle_parsing_errors=True,
         # memory=memory,
@@ -481,7 +534,7 @@ def get_athena_uri(region_name):
 
     connathena=f"athena.us-east-2.amazonaws.com"
     portathena='443' #Update, if port is different.
-    schemaathena='syntheticgeneraldata_consume' #from Amazon Athena _consume
+    schemaathena='syntheticgeneraldata' #from Amazon Athena _consume
     s3stagingathena=f's3://dev-insurancelake-566541803426-us-east-2-glue-temp/query-results/'#from Amazon Athena settings
     wkgrpathena='insurancelake'#Update, if the workgroup is different
 
